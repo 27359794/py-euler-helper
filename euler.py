@@ -111,7 +111,8 @@ def prime_factorise(n):
 
     """
     global _PRIMES
-    assert _PRIMES is not None, "must call euler.init_primes(n) first."
+    if _PRIMES is None:
+        raise RuntimeError("must call euler.init_primes(n) first.")
 
     if is_prime(n):
         return [n] # special-cased for speed
@@ -181,6 +182,30 @@ def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     """
     return ((num == 0) and numerals[0]) or (to_base(num // b, b,
             numerals).lstrip(numerals[0]) + numerals[num % b])
+
+
+def partitions_of(n):
+    """
+    Sorted list of sorted tuples, each tuple being a partition of n.
+
+    >>> partitions_of(5)
+    [(1, 1, 1, 1, 1), (1, 1, 1, 2), (1, 1, 3), (1, 2, 2), (1, 4), (2, 3), (5,)]
+
+    """
+    parts = []
+    @memoize
+
+    def gen(cur, remaining, cur_num):
+        if remaining == 0:
+            parts.append(cur)
+        else:
+            if cur_num <= remaining:
+                gen(cur + (cur_num,), remaining - cur_num, cur_num)
+                gen(cur, remaining, cur_num + 1)
+
+    gen((), n, 1)
+    return parts
+
 
 import doctest
 doctest.testmod()
