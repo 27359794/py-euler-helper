@@ -193,8 +193,8 @@ def partitions_of(n):
 
     """
     parts = []
-    @memoize
 
+    @memoize
     def gen(cur, remaining, cur_num):
         if remaining == 0:
             parts.append(cur)
