@@ -5,13 +5,13 @@ use me with python3 only :)
 import random
 
 def primes_to(n):
-    """List of sorted primes in [2,n].
+    """
+    List of sorted primes in [2,n].
 
     >>> primes_to(10)
     [2, 3, 5, 7]
     >>> primes_to(11)
     [2, 3, 5, 7, 11]
-
     """
     isPrime = [True for i in range(0, n+1)]
     for i in range(2, int(n**0.5)+1):
@@ -23,7 +23,8 @@ def primes_to(n):
 
 
 def is_prime(n):
-    """Miller-Rabin primality test.
+    """
+    Miller-Rabin primality test.
 
     >>> is_prime(97)
     True
@@ -77,7 +78,6 @@ def factorise(n):
 
     >>> list(sorted(factorise(100)))
     [1, 2, 4, 5, 10, 20, 25, 50, 100]
-
     """
     factors = set()
     for i in range(1, int(n**0.5 + 1)):
@@ -108,7 +108,6 @@ def prime_factorise(n):
     [2, 2, 3, 5, 5]
     >>> prime_factorise(97)
     [97]
-
     """
     global _PRIMES
     if _PRIMES is None:
@@ -142,7 +141,6 @@ def memoize(f):
     ...
     >>> fib(100)
     573147844013817084101
-
     """
     cache = {}
     def helper(*args):
@@ -162,7 +160,6 @@ def gcd(a, b):
     6
     >>> gcd(72, 81)
     9
-
     """
     if b > a:
         return gcd(b, a)
@@ -178,7 +175,6 @@ def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     'deadbeef'
     >>> to_base(1234, 10)
     '1234'
-
     """
     return ((num == 0) and numerals[0]) or (to_base(num // b, b,
             numerals).lstrip(numerals[0]) + numerals[num % b])
@@ -190,7 +186,6 @@ def partitions_of(n):
 
     >>> partitions_of(5)
     [(1, 1, 1, 1, 1), (1, 1, 1, 2), (1, 1, 3), (1, 2, 2), (1, 4), (2, 3), (5,)]
-
     """
     parts = []
 
