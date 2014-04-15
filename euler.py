@@ -161,6 +161,8 @@ def gcd(a, b):
     >>> gcd(72, 81)
     9
     """
+    assert a >= 0 and b >= 0
+
     if b > a:
         return gcd(b, a)
     elif b == 0:
@@ -176,6 +178,8 @@ def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     >>> to_base(1234, 10)
     '1234'
     """
+    assert b >= 1
+
     return ((num == 0) and numerals[0]) or (to_base(num // b, b,
             numerals).lstrip(numerals[0]) + numerals[num % b])
 
@@ -187,6 +191,8 @@ def partitions_of(n):
     >>> partitions_of(5)
     [(1, 1, 1, 1, 1), (1, 1, 1, 2), (1, 1, 3), (1, 2, 2), (1, 4), (2, 3), (5,)]
     """
+    assert n >= 0
+
     parts = []
 
     @memoize
@@ -200,6 +206,27 @@ def partitions_of(n):
 
     gen((), n, 1)
     return parts
+
+
+@memoize
+def binom(n, k):
+    """
+    >>> binom(20, 0)
+    1
+    >>> binom(20, 20)
+    1
+    >>> binom(5, 2)
+    10
+    >>> binom(100, 99)
+    99
+    """
+    assert n >= 0 and k >= 0
+    assert k <= n
+
+    if k == 0:
+        return 1
+    else:
+        return binom(n, k-1) + binom(n-1, k-1)
 
 
 import doctest
