@@ -229,5 +229,25 @@ def binom(n, k):
         return binom(n, k-1) + binom(n-1, k-1)
 
 
+def popcount(n):
+    """
+    >>> popcount(0)
+    0
+    >>> popcount(1)
+    1
+    >>> popcount(16)
+    1
+    >>> popcount(int('10110100111101', 2))
+    9
+    """
+    i = 1
+    ans = 0
+    while i <= n:
+        if n & i:
+            ans += 1
+        i *= 2
+    return ans
+
+
 import doctest
 doctest.testmod()
