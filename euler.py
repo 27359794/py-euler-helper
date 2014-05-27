@@ -144,9 +144,10 @@ def memoize(f):
     """
     cache = {}
     def helper(*args):
-        if args not in cache:
-            cache[args] = f(*args)
-        return cache[args]
+        key = (f.__name__,) + args
+        if key not in cache:
+            cache[key] = f(*args)
+        return cache[key]
     return helper
 
 
@@ -208,7 +209,7 @@ def partitions_of(n):
     return parts
 
 
-@memoize
+#@memoize
 def binom(n, k):
     """
     >>> binom(20, 0)
@@ -218,16 +219,15 @@ def binom(n, k):
     >>> binom(5, 2)
     10
     >>> binom(100, 99)
-    99
+    100
     """
     assert n >= 0 and k >= 0
     assert k <= n
 
-    if k == 0:
+    if k == 0 or k == n:
         return 1
     else:
-        return binom(n, k-1) + binom(n-1, k-1)
-
+        return binom(n-1, k) + binom(n-1, k-1)
 
 def popcount(n):
     """
@@ -247,7 +247,6 @@ def popcount(n):
             ans += 1
         i *= 2
     return ans
-
 
 import doctest
 doctest.testmod()
