@@ -62,10 +62,7 @@ def is_prime(n):
 
 
 def matrix_exp_mod(mat, exp, mod=float('inf')):
-    """
-    Matrix exponentiation (modular optional).
-    M is a numpy matrix.
-    """
+    """Matrix exponentiation (modular optional). M is a numpy matrix."""
     if exp == 1:
         return mat % mod
     elif exp % 2 != 0:
@@ -112,7 +109,6 @@ def prime_factorise(n):
     >>> prime_factorise(97)
     [97]
     """
-    global _PRIMES
     if _PRIMES is None:
         raise RuntimeError("must call euler.init_primes(n) first.")
 
