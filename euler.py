@@ -292,5 +292,21 @@ def all_combinations(iterable):
     for size in range(0, len(iterable) + 1):
         yield from itertools.combinations(iterable, size)
 
+def prod(xs):
+    """
+    >>> prod([5, 10])
+    50
+    >>> prod([3, 4, 5, 6])
+    360
+    >>> prod([0])
+    0
+    >>> prod()
+    1
+    """
+    t = 1
+    for x in xs:
+        t *= x
+    return t
+
 import doctest
 doctest.testmod()
