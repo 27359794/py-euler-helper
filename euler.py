@@ -3,6 +3,7 @@ use me with python3 only :)
 """
 
 import random
+import itertools
 
 def primes_to(n):
     """
@@ -128,6 +129,7 @@ def prime_factorise(n):
                 return pfs + [cur]
         else:
             pp += 1
+
     return pfs
 
 
@@ -209,9 +211,12 @@ def partitions_of(n):
     return parts
 
 
-#@memoize
+@memoize
 def binom(n, k):
     """
+    NOTE: these doctests don't run as expected because of weird interplay
+    between the @memoize decorator and doctests. If you change this function,
+    please test it manually. The doctests are left as examples.
     >>> binom(20, 0)
     1
     >>> binom(20, 20)
@@ -247,6 +252,39 @@ def popcount(n):
             ans += 1
         i *= 2
     return ans
+
+def digit_sum(n):
+    """
+    >>> digit_sum(0)
+    0
+    >>> digit_sum(1)
+    1
+    >>> digit_sum(10)
+    1
+    >>> digit_sum(123456)
+    21
+    """
+    assert n >= 0, "digit sum only defined for non-negative numbers"
+    return sum(int(d) for d in str(n))
+
+def all_combinations(iterable):
+    """
+    Iterator for every tuple combination of items in iterable, of all sizes, in
+    size order then lexicographic order.
+
+    >>> for comb in all_combinations([1, 2, 3]):
+    ...     print(comb)
+    ()
+    (1,)
+    (2,)
+    (3,)
+    (1, 2)
+    (1, 3)
+    (2, 3)
+    (1, 2, 3)
+    """
+    for size in range(0, len(iterable) + 1):
+        yield from itertools.combinations(iterable, size)
 
 import doctest
 doctest.testmod()
