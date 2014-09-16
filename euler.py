@@ -1,5 +1,7 @@
 """
-use me with python3 only :)
+Helper functions for solving Project Euler problems.
+Author: Dan Goldbach
+Python 3 only.
 """
 
 import random
