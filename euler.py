@@ -183,8 +183,11 @@ def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     """
     assert b >= 1
 
-    return ((num == 0) and numerals[0]) or (to_base(num // b, b,
-            numerals).lstrip(numerals[0]) + numerals[num % b])
+    if num == 0:
+        return numerals[0]
+    else:
+        return (to_base(num // b, b, numerals).lstrip(numerals[0])
+                + numerals[num % b])
 
 
 def partitions_of(n):
@@ -236,6 +239,9 @@ def binom(n, k):
 
 def popcount(n):
     """
+    Number of 1's in the binary representation of n. Also known as Hamming
+    weight.
+
     >>> popcount(0)
     0
     >>> popcount(1)
