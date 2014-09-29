@@ -24,7 +24,6 @@ def primes_to(n):
             isPrime[j] = False
     return [x for x in range(2, len(isPrime)) if isPrime[x]]
 
-
 def is_prime(n):
     """
     Miller-Rabin primality test.
@@ -144,7 +143,7 @@ def memoize(f):
     """
     cache = {}
     def helper(*args):
-        key = (f.__name__,) + args
+        key = f.__name__ + repr(args)
         if key not in cache:
             cache[key] = f(*args)
         return cache[key]
@@ -288,7 +287,8 @@ def all_combinations(iterable):
     (1, 2, 3)
     """
     for size in range(0, len(iterable) + 1):
-        yield from itertools.combinations(iterable, size)
+        for c in itertools.combinations(iterable, size):
+            yield c
 
 def prod(xs):
     """
