@@ -33,6 +33,9 @@ def is_prime(n):
     >>> is_prime(96)
     False
     """
+    if n <= 1:
+        return False
+
     def _miller_rabin_pass(a, s, d, n):
         a_to_power = pow(a, d, n)
         if a_to_power == 1:
@@ -43,8 +46,6 @@ def is_prime(n):
             a_to_power = (a_to_power * a_to_power) % n
         return a_to_power == n - 1
 
-    if n == 1:
-        return False
     d = n - 1
     s = 0
     while d % 2 == 0:
@@ -108,8 +109,7 @@ def prime_factorise(n):
     >>> prime_factorise(97)
     [97]
     """
-    if _PRIMES is None:
-        raise RuntimeError("must call euler.init_primes(n) first.")
+    _check_primes_initialised()
 
     if is_prime(n):
         return [n] # special-cased for speed
@@ -191,6 +191,8 @@ def partitions_of(n):
     """
     Sorted list of sorted tuples, each tuple being a partition of n.
 
+    >>> partitions_of(4)
+    [(1, 1, 1, 1), (1, 1, 2), (1, 3), (2, 2), (4,)]
     >>> partitions_of(5)
     [(1, 1, 1, 1, 1), (1, 1, 1, 2), (1, 1, 3), (1, 2, 2), (1, 4), (2, 3), (5,)]
     """
@@ -287,6 +289,8 @@ def all_combinations(iterable):
     (1, 2, 3)
     """
     for size in range(0, len(iterable) + 1):
+        # TODO: change this pair of lines to a `yield from` following release of 
+        #       pypy 3.4, when `yield from` was introduced.
         for c in itertools.combinations(iterable, size):
             yield c
 
@@ -305,6 +309,36 @@ def prod(xs):
     for x in xs:
         t *= x
     return t
+
+def totient(n):
+    """
+    Euler's totient of n: number of positive integers less than and coprime to
+    n.
+
+    Requires primes initialised up to sqrt(n).
+
+    >>> init_primes(10)
+    >>> totient(1)
+    1
+    >>> totient(9)
+    6
+    >>> totient(36)
+    12
+    """
+    _check_primes_initialised()
+
+    total = 1
+    for prime in _PRIMES:
+        if prime > n**0.5:
+            break
+        if n % prime == 0:
+            total *= 1 - 1/float(prime)
+    return round(n * total)
+
+def _check_primes_initialised():
+    """Helper function for prime-utilising functions."""
+    if _PRIMES is None:
+        raise RuntimeError("must call euler.init_primes(n) first.")
 
 import doctest
 doctest.testmod()
