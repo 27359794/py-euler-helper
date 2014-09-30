@@ -92,7 +92,7 @@ _PRIMES = None
 def init_primes(n):
     """
     Initialise prime array (used by module's prime-related functions) to
-    primes up to n.
+    primes not greater than n.
     """
     global _PRIMES
     _PRIMES = primes_to(n)
