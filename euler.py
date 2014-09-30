@@ -134,11 +134,16 @@ def memoize(f):
     """
     Memoization decorator.
 
+    This was partially made redundant by Python 3's functools.lru_cache.
+    Eventually I'll transition over to lru_cache but this is useful for now. In
+    particular, memoize doesn't require that arguments be hashable. It's also
+    more streamlined.
+
     >>> @memoize
     ... def fib(n):
     ...     return 1 if n < 2 else fib(n-1) + fib(n-2)
     ...
-    >>> fib(100)
+    >>> fib(100)  # Without memoization, this would take yonks.
     573147844013817084101
     """
     cache = {}
