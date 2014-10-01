@@ -6,6 +6,7 @@ Python 3 only.
 
 import random
 import itertools
+import collections
 
 def primes_to(n):
     """
@@ -60,6 +61,34 @@ def is_prime(n):
             return False
     return True
 
+def prime_factorise_range(n):
+    """
+    Dictionary of {k: sorted prime factors of k with repetitions} for k in 2..n,
+    in O(n log n) with significant overhead.
+
+    Prefer prime_factorise(n) if you only need factors of one n.
+
+    Requires init_primes(n) first.
+
+    >>> init_primes(20)
+    >>> pfs = prime_factorise_range(11)
+    >>> print([pfs[i] for i in range(2, 12)])
+    [[2], [3], [2, 2], [5], [3, 2], [7], [2, 2, 2], [3, 3], [5, 2], [11]]
+    """
+    _check_primes_initialised()
+
+    pfs = collections.defaultdict(list,
+            {p: [p] for p in itertools.takewhile(lambda m: m <= n, _PRIMES)})
+
+    for x in range(2, n + 1):
+        for m in range(1, x + 1):
+            if x * m > n:
+                break
+            if pfs[x * m]:
+                continue
+            pfs[x * m] = pfs[x] + pfs[m]
+
+    return pfs
 
 def matrix_exp_mod(mat, exp, mod=float('inf')):
     """Matrix exponentiation (modular optional). M is a numpy matrix."""
@@ -70,7 +99,6 @@ def matrix_exp_mod(mat, exp, mod=float('inf')):
     else:  # exp even
         half = matrix_exp_mod(mat, exp//2, mod)
         return (half * half) % mod
-
 
 def factorise(n):
     """
@@ -86,22 +114,22 @@ def factorise(n):
             factors.add(n // i)
     return factors
 
-
 _PRIMES = None
 
 def init_primes(n):
     """
-    Initialise prime array (used by module's prime-related functions) to
-    primes not greater than n.
+    Initialise prime array (used by module's prime-related functions) to primes
+    not greater than n.
     """
     global _PRIMES
     _PRIMES = primes_to(n)
 
-
 def prime_factorise(n):
     """
-    Sorted sequence of prime factors with repetitions. Call init_primes(n)
-    first, where n >= the largest prime in a number you're prime-factorising.
+    Sorted sequence of prime factors with repetitions, in O(n sqrt n). Call
+    init_primes(n) first, where n >= the largest prime in a number you're
+    prime-factorising.  Prefer prime_factorise_range(n) if you require prime
+    factors of many numbers, because it runs in O(n log n).
 
     >>> init_primes(100)
     >>> prime_factorise(300)
@@ -129,7 +157,6 @@ def prime_factorise(n):
 
     return pfs
 
-
 def memoize(f):
     """
     Memoization decorator.
@@ -154,7 +181,6 @@ def memoize(f):
         return cache[key]
     return helper
 
-
 def gcd(a, b):
     """
     >>> gcd(9, 3)
@@ -175,7 +201,6 @@ def gcd(a, b):
     else:
         return gcd(b, a%b)
 
-
 def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     """
     >>> to_base(int('deadbeef', 16), 16)
@@ -190,7 +215,6 @@ def to_base(num, b, numerals="0123456789abcdefghijklmnopqrstuvwxyz"):
     else:
         return (to_base(num // b, b, numerals).lstrip(numerals[0])
                 + numerals[num % b])
-
 
 def partitions_of(n):
     """
@@ -216,7 +240,6 @@ def partitions_of(n):
 
     gen((), n, 1)
     return parts
-
 
 @memoize
 def binom(n, k):
