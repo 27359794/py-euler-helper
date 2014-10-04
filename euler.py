@@ -8,9 +8,14 @@ import collections
 import itertools
 import random
 
+# Global vars consulted by many of the prime-related functions in the module.
+# Initialised by init_primes(n).
+_PRIMES = None
+_PRIME_LIMIT = None
+
 def primes_to(n):
     """
-    List of sorted primes in [2,n].
+    List of sorted primes in [2,n] in O(n log n).
 
     >>> primes_to(10)
     [2, 3, 5, 7]
@@ -64,18 +69,18 @@ def is_prime(n):
 def prime_factorise_range(n):
     """
     Dictionary of {k: sorted prime factors of k with repetitions} for k in 2..n,
-    in O(n log n) with significant overhead.
+    in O(n log n) with overhead.
 
     Prefer prime_factorise(n) if you only need factors of one n.
 
-    Requires init_primes(n) first.
+    Requires init_primes(>=n) first.
 
     >>> init_primes(20)
     >>> pfs = prime_factorise_range(11)
     >>> print([pfs[i] for i in range(2, 12)])
     [[2], [3], [2, 2], [5], [3, 2], [7], [2, 2, 2], [3, 3], [5, 2], [11]]
     """
-    _check_primes_initialised()
+    _check_primes_initialised_to(n)
 
     pfs = collections.defaultdict(list,
             {p: [p] for p in itertools.takewhile(lambda m: m <= n, _PRIMES)})
@@ -114,22 +119,21 @@ def factorise(n):
             factors.add(n // i)
     return factors
 
-_PRIMES = None
-
 def init_primes(n):
     """
     Initialise prime array (used by module's prime-related functions) to primes
     not greater than n.
     """
-    global _PRIMES
+    global _PRIMES, _PRIME_LIMIT
+    _PRIME_LIMIT = n
     _PRIMES = primes_to(n)
 
 def prime_factorise(n):
     """
-    Sorted sequence of prime factors with repetitions, in O(sqrt n). Call
-    init_primes(n) first, where n >= the largest prime in a number you're
-    prime-factorising.  Prefer prime_factorise_range(n) if you require prime
-    factors of many numbers, because it runs in O(n log n).
+    Sorted sequence of prime factors with repetitions, in O(sqrt n) with
+    overhead. Call init_primes(n) first, where n >= the largest prime in a
+    number you're prime-factorising.  Prefer prime_factorise_range(n) if you
+    require prime factors of many numbers, because it runs in O(n log n).
 
     >>> init_primes(100)
     >>> prime_factorise(300)
@@ -137,7 +141,7 @@ def prime_factorise(n):
     >>> prime_factorise(97)
     [97]
     """
-    _check_primes_initialised()
+    _check_primes_initialised_to(n**0.5 + 1)
 
     if is_prime(n):
         return [n] # special-cased for speed
@@ -183,6 +187,8 @@ def memoize(f):
 
 def gcd(a, b):
     """
+    Greatest common denominator in O(log max(a,b))
+
     >>> gcd(9, 3)
     3
     >>> gcd(12, 6)
@@ -246,6 +252,8 @@ def partitions_of(n):
 @memoize
 def binom(n, k):
     """
+    Binomial coefficient C(n, k).
+
     NOTE: these doctests don't run as expected because of weird interplay
     between the @memoize decorator and doctests. If you change this function,
     please test it manually. The doctests are left as examples.
@@ -268,8 +276,7 @@ def binom(n, k):
 
 def popcount(n):
     """
-    Number of 1's in the binary representation of n. Also known as Hamming
-    weight.
+    Number of 1's in the binary representation of n. 
 
     >>> popcount(0)
     0
@@ -343,10 +350,7 @@ def prod(xs):
 def totient(n):
     """
     Euler's totient of n: number of positive integers less than and coprime to
-    n.
-
-    Requires primes initialised up to n inclusive, NOT sqrt(n), as an integer
-    can have a prime factor greater than its sqrt.
+    n. O(sqrt n).
 
     >>> init_primes(50000)
     >>> totient(1)
@@ -355,20 +359,19 @@ def totient(n):
     6
     >>> totient(14)
     6
+    >>> totient(36)
+    12
     >>> totient(23485)
     14400
     """
-    _check_primes_initialised()
-
     total = 1
-    for prime in itertools.takewhile(lambda p: p <= n, _PRIMES):
-        if n % prime == 0:
-            total *= 1 - 1/prime
+    for prime in set(prime_factorise(n)):
+        total *= 1 - 1/prime
     return round(n * total)
 
-def _check_primes_initialised():
+def _check_primes_initialised_to(min_limit):
     """Helper function for prime-utilising functions."""
-    if _PRIMES is None:
+    if _PRIMES is None or _PRIME_LIMIT < min_limit:
         raise RuntimeError("must call euler.init_primes(n) first.")
 
 import doctest
