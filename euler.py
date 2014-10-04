@@ -126,7 +126,7 @@ def init_primes(n):
 
 def prime_factorise(n):
     """
-    Sorted sequence of prime factors with repetitions, in O(n sqrt n). Call
+    Sorted sequence of prime factors with repetitions, in O(sqrt n). Call
     init_primes(n) first, where n >= the largest prime in a number you're
     prime-factorising.  Prefer prime_factorise_range(n) if you require prime
     factors of many numbers, because it runs in O(n log n).
@@ -191,6 +191,8 @@ def gcd(a, b):
     6
     >>> gcd(72, 81)
     9
+    >>> gcd(29, 97)
+    1
     """
     assert a >= 0 and b >= 0
 
