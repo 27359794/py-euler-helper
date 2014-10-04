@@ -4,9 +4,9 @@ Author: Dan Goldbach
 Python 3 only.
 """
 
-import random
-import itertools
 import collections
+import itertools
+import random
 
 def primes_to(n):
     """
@@ -343,24 +343,25 @@ def totient(n):
     Euler's totient of n: number of positive integers less than and coprime to
     n.
 
-    Requires primes initialised up to sqrt(n).
+    Requires primes initialised up to n inclusive, NOT sqrt(n), as an integer
+    can have a prime factor greater than its sqrt.
 
-    >>> init_primes(10)
+    >>> init_primes(50000)
     >>> totient(1)
     1
     >>> totient(9)
     6
-    >>> totient(36)
-    12
+    >>> totient(14)
+    6
+    >>> totient(23485)
+    14400
     """
     _check_primes_initialised()
 
     total = 1
-    for prime in _PRIMES:
-        if prime > n**0.5:
-            break
+    for prime in itertools.takewhile(lambda p: p <= n, _PRIMES):
         if n % prime == 0:
-            total *= 1 - 1/float(prime)
+            total *= 1 - 1/prime
     return round(n * total)
 
 def _check_primes_initialised():
