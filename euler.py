@@ -369,10 +369,14 @@ def totient(n):
         total *= 1 - 1/prime
     return round(n * total)
 
-def _check_primes_initialised_to(min_limit):
-    """Helper function for prime-utilising functions."""
-    if _PRIMES is None or _PRIME_LIMIT < min_limit:
-        raise RuntimeError("must call euler.init_primes(n) first.")
+def _check_primes_initialised_to(n):
+    """
+    Helper function for prime-utilising functions. Check that the prime list
+    has been initialised for primes up to at least n.
+    """
+    if _PRIMES is None or _PRIME_LIMIT < n:
+        raise RuntimeError(
+                "must call euler.init_primes(>={:.0f}) first.".format(n))
 
 import doctest
 doctest.testmod()
