@@ -396,6 +396,46 @@ def totient(n):
         total *= 1 - 1/prime
     return round(n * total)
 
+def _cross_product(x0, y0, x1, y1):
+    return x0*y1 - x1*y0
+
+def point_angle_cmp(base, a, b):
+    """
+    Compare the angle of point a to point b, relative to point base. Can be used
+    as a sort comparator, as long as you're careful about transitivity: ensure
+    that all the points in the sort list lie to one side of any line drawn
+    through base.
+
+     0  if a, b, base are collinear.
+    -1  if a is to the left of b.
+    +1  if a is to the right of b.
+
+    >>> point_angle_cmp((0,1), (1,0), (0,0))
+    -1
+    >>> point_angle_cmp((1,-1), (1,1), (0,0))
+    1
+    >>> point_angle_cmp((0,1), (1,0), (1,1))
+    1
+    >>> point_angle_cmp((20.5,9), (-30,-2), (25,15))
+    -1
+    >>> point_angle_cmp((20.5,9), (-30,-2), (25,-15))
+    1
+    >>> point_angle_cmp((20.5,9), (-30,2), (-25,-15))
+    1
+    >>> point_angle_cmp((0,0), (1,1), (2,2))
+    0
+    >>> point_angle_cmp((1,1), (3,1), (5,1))
+    0
+    >>> point_angle_cmp((-1, -1), (-1, 2), (-1, 20))
+    0
+    """
+    aa = (a[0] - base[0], a[1] - base[1])
+    bb = (b[0] - base[0], b[1] - base[1])
+    cross = _cross_product(aa[0], aa[1], bb[0], bb[1])
+    if cross == 0:
+        return 0
+    return -1 if cross < 0 else 1
+
 def _check_primes_initialised_to(n):
     """
     Helper function for prime-utilising functions. Check that the prime list
