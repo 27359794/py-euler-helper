@@ -161,6 +161,33 @@ def prime_factorise(n):
 
     return pfs
 
+def factors_from_prime_factors(prime_factor_list):
+    """
+    Compute factors of a number given its prime factorisation. Efficiently deals 
+    with duplicate prime factors, unlike algorithms that naively take 
+    combinations of elements from the prime factor list.
+
+    >>> sorted(factors_from_prime_factors([2]))  # n = 2
+    [1, 2]
+    >>> sorted(factors_from_prime_factors([2, 2, 3, 7]))  # n = 84
+    [1, 2, 3, 4, 6, 7, 12, 14, 21, 28, 42, 84]
+    >>> len(factors_from_prime_factors([2]*200))  # n = 2^200
+    201
+    """
+    pf_count = sorted(collections.Counter(prime_factor_list).items())
+    factors = []
+
+    def _gen(pi, n):
+        if pi == len(pf_count):
+            factors.append(n)
+        else:
+            for i in range(pf_count[pi][1] + 1):
+                _gen(pi+1, n * pf_count[pi][0]**i)
+
+    _gen(0, 1)
+    return factors
+
+
 def memoize(f):
     """
     Memoization decorator.
