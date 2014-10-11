@@ -12,6 +12,7 @@ to strip out asserts.
 
 import collections
 import itertools
+import math
 import random
 
 # Global vars consulted by many of the prime-related functions in the module.
@@ -478,6 +479,28 @@ def point_angle_cmp(base, a, b):
     if cross == 0:
         return 0
     return -1 if cross < 0 else 1
+
+def triangle_area(a, b, c):
+    """
+    Area of triangle with vertices at (x,y) points a, b, c.
+
+    >>> triangle_area((-1,-1), (1,1), (0,2))
+    2.0
+    >>> triangle_area((0,1), (0,0), (1,0))
+    0.5
+    >>> triangle_area((0,0), (0,1), (1,0))
+    0.5
+    """
+    return 0.5 * abs(_cross_product(a[0]-b[0], a[1]-b[1], c[0]-b[0], c[1]-b[1]))
+
+def dist(a, b):
+    """
+    Euclidean distance between (x,y) points a and b. 
+
+    >>> round(dist((-1,-1), (1,2))**2, 10)
+    13.0
+    """
+    return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
 
 def _cross_product(x0, y0, x1, y1):
     return x0*y1 - x1*y0
