@@ -1,7 +1,13 @@
 """
 Helper functions for solving Project Euler problems.
 Author: Dan Goldbach
+
 Python 3 only.
+
+This library is intentionally over-zealous when it comes to asserting
+preconditions and invariants. Consider running the interpreter with the -O flag
+to strip out asserts.
+
 """
 
 import collections
@@ -396,8 +402,44 @@ def totient(n):
         total *= 1 - 1/prime
     return round(n * total)
 
-def _cross_product(x0, y0, x1, y1):
-    return x0*y1 - x1*y0
+################################################################################
+# Computational Geometry
+################################################################################
+
+def point_line_cmp(query, p1, p2):
+    """
+    Determine the position of (x,y) point query relative to the line passing
+    through p1, p2 in that direction.
+
+     0 if query, p1, p2 collinear
+    -1 if query is to the left of p1->p2.
+    +1 if query is to the right of p1->p2.
+
+    >>> point_line_cmp((3,0), (1,0), (2,0))
+    0
+    >>> point_line_cmp((-3,1), (1,0), (2,0))
+    -1
+    >>> point_line_cmp((10,-5), (1,0), (2,0))
+    1
+    >>> point_line_cmp((-1,1), (-1,-1), (1,1))
+    -1
+    >>> point_line_cmp((-1,1), (1,1), (-1,-1))
+    1
+    >>> point_line_cmp((-1,-1), (1,1), (-5,-5))
+    0
+    >>> point_line_cmp((0,1), (0,-1), (0,0))
+    0
+    """
+    assert p1 != p2, 'p1, p2 must be distinct points to specify a line'
+    a = p2[1] - p1[1]
+    b = p1[0] - p2[0]
+    c = (p2[0]-p1[0])*p1[1] - (p2[1]-p1[1])*p1[0]
+    res = a*query[0] + b*query[1] + c
+
+    if res == 0:
+        return 0
+    return -1 if res < 0 else 1
+
 
 def point_angle_cmp(base, a, b):
     """
@@ -432,9 +474,17 @@ def point_angle_cmp(base, a, b):
     aa = (a[0] - base[0], a[1] - base[1])
     bb = (b[0] - base[0], b[1] - base[1])
     cross = _cross_product(aa[0], aa[1], bb[0], bb[1])
+
     if cross == 0:
         return 0
     return -1 if cross < 0 else 1
+
+def _cross_product(x0, y0, x1, y1):
+    return x0*y1 - x1*y0
+
+################################################################################
+# Internal
+################################################################################
 
 def _check_primes_initialised_to(n):
     """
