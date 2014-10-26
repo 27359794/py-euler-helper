@@ -11,6 +11,7 @@ to strip out asserts.
 """
 
 import collections
+import functools
 import itertools
 import math
 import random
@@ -170,8 +171,8 @@ def prime_factorise(n):
 
 def factors_from_prime_factors(prime_factor_list):
     """
-    Compute factors of a number given its prime factorisation. Efficiently deals 
-    with duplicate prime factors, unlike algorithms that naively take 
+    Compute factors of a number given its prime factorisation. Efficiently deals
+    with duplicate prime factors, unlike algorithms that naively take
     combinations of elements from the prime factor list.
 
     >>> sorted(factors_from_prime_factors([2]))  # n = 2
@@ -212,6 +213,7 @@ def memoize(f):
     573147844013817084101
     """
     cache = {}
+    @functools.wraps(f)
     def helper(*args):
         key = f.__name__ + repr(args)
         if key not in cache:
@@ -286,11 +288,8 @@ def partitions_of(n):
 @memoize
 def binom(n, k):
     """
-    Binomial coefficient C(n, k).
 
-    NOTE: these doctests don't run as expected because of weird interplay
-    between the @memoize decorator and doctests. If you change this function,
-    please test it manually. The doctests are left as examples.
+    Binomial coefficient C(n, k).
     >>> binom(20, 0)
     1
     >>> binom(20, 20)
@@ -308,9 +307,25 @@ def binom(n, k):
     else:
         return binom(n-1, k) + binom(n-1, k-1)
 
+@memoize
+def binom_P(n, k):
+    """
+    Permutations of k elements of n: P(n, k).
+
+    >>> binom_P(20, 0)
+    1
+    >>> binom_P(20, 20)
+    2432902008176640000
+    >>> binom_P(5, 2)
+    20
+    >>> binom_P(100, 99)
+    93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
+    """
+    return binom(n, k) * math.factorial(k)
+
 def popcount(n):
     """
-    Number of 1's in the binary representation of n. 
+    Number of 1's in the binary representation of n.
 
     >>> popcount(0)
     0
@@ -360,7 +375,7 @@ def all_combinations(iterable):
     (1, 2, 3)
     """
     for size in range(0, len(iterable) + 1):
-        # TODO: change this pair of lines to a `yield from` following release of 
+        # TODO: change this pair of lines to a `yield from` following release of
         #       pypy 3.4, when `yield from` was introduced.
         for c in itertools.combinations(iterable, size):
             yield c
@@ -495,7 +510,7 @@ def triangle_area(a, b, c):
 
 def dist(a, b):
     """
-    Euclidean distance between (x,y) points a and b. 
+    Euclidean distance between (x,y) points a and b.
 
     >>> round(dist((-1,-1), (1,2))**2, 10)
     13.0
