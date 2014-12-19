@@ -103,6 +103,21 @@ def prime_factorise_range(n):
 
     return pfs
 
+def factor_count_range(n):
+    """
+    Value at index n is the number of distinct factors of n including 1 and n,
+    in O(n log n). (i.e. the divisor function applied to integers in [0, n])
+
+    >>> factor_count_range(10)
+    [0, 1, 2, 2, 3, 2, 4, 2, 4, 3, 4]
+    """
+    counts = [0] * (n+1)
+    for x in range(1, n+1):
+        for m in range(x, n+1, x):
+            counts[m] += 1
+    return counts
+
+
 def matrix_exp_mod(mat, exp, mod=float('inf')):
     """Matrix exponentiation (modular optional). M is a numpy matrix."""
     if exp == 1:
